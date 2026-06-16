@@ -1,0 +1,8 @@
+node_modules/
+dist/
+release/
+.idea/
+.DS_Store
+*.log
+.env
+.env.local
