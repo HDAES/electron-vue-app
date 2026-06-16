@@ -10,9 +10,9 @@
     "dev:vite": "vite",
     "dev:electron": "wait-on http://localhost:5173 && cross-env NODE_ENV=development electron .",
     "build": "vite build && electron-builder",
-    "build:win": "vite build && electron-builder --win",
-    "build:mac": "vite build && electron-builder --mac",
-    "build:linux": "vite build && electron-builder --linux",
+    "build:win": "vite build && electron-builder --win --publish never",
+    "build:mac": "vite build && electron-builder --mac --publish never",
+    "build:linux": "vite build && electron-builder --linux --publish never",
     "generate:icons": "node scripts/generate-icons.mjs"
   },
   "build": {
@@ -21,6 +21,7 @@
     "directories": {
       "output": "release"
     },
+    "publish": null,
     "files": [
       "electron/**/*",
       "dist/**/*",

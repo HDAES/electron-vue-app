@@ -26,9 +26,6 @@ jobs:
         run: npm ci
 
       - name: Build Windows app
-        env:
-          CSC_LINK: ${{ secrets.WIN_CSC_LINK }}
-          CSC_KEY_PASSWORD: ${{ secrets.WIN_CSC_KEY_PASSWORD }}
         run: npm run build:win
 
       - name: Upload Windows artifacts
@@ -53,9 +50,6 @@ jobs:
         run: npm ci
 
       - name: Build macOS app
-        env:
-          CSC_LINK: ${{ secrets.MAC_CSC_LINK }}
-          CSC_KEY_PASSWORD: ${{ secrets.MAC_CSC_KEY_PASSWORD }}
         run: npm run build:mac
 
       - name: Upload macOS artifacts
