@@ -121,7 +121,16 @@ git push -u origin main
 1. 打开 GitHub 仓库 → **Actions**
 2. 选择 **Build Release** → **Run workflow**
 3. 等待构建完成（首次约 5～15 分钟）
-4. 进入本次 run → 底部 **Artifacts** → 下载 `windows-build` 或 `mac-build`
+4. 进入本次 run → 底部 **Artifacts**，每个安装包独立下载：
+
+| Artifact | 说明 |
+|----------|------|
+| `windows-setup` | Windows NSIS 安装包（`.exe`） |
+| `windows-zip` | Windows 绿色压缩包（`.zip`） |
+| `mac-dmg` | macOS 磁盘镜像（`.dmg`） |
+| `mac-zip` | macOS 压缩包（`.zip`） |
+
+推送 tag 后，**Releases** 页面也会列出以上 4 个文件，可单独下载。
 
 ### 方式二：打 tag 自动发布 Release
 
