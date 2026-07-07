@@ -1,11 +1,15 @@
 const { contextBridge, ipcRenderer } = require('electron');
 
-contextBridge.exposeInMainWorld('electronAPI', {
-  platform: process.platform,
-  versions: {
-    node: process.versions.node,
-    chrome: process.versions.chrome,
-    electron: process.versions.electron
-  },
-  ping: () => ipcRenderer.invoke('ping')
+const runtimeVersions = Object.freeze({
+  node: process.versions.node,
+  chrome: process.versions.chrome,
+  electron: process.versions.electron
 });
+
+const electronAPI = Object.freeze({
+  platform: process.platform,
+  versions: runtimeVersions,
+  ping: async () => String(await ipcRenderer.invoke('ping'))
+});
+
+contextBridge.exposeInMainWorld('electronAPI', electronAPI);
