@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -9,37 +8,9 @@ import {
   CardHeader,
   CardTitle
 } from '@/components/ui/card';
+import { useElectronRuntime } from '@/composables/useElectronRuntime';
 
-const platform = ref('-');
-const versions = ref({ electron: '-', chrome: '-', node: '-' });
-const loading = ref(false);
-const pingResult = ref('');
-
-onMounted(() => {
-  if (window.electronAPI) {
-    platform.value = window.electronAPI.platform;
-    versions.value = window.electronAPI.versions;
-  }
-});
-
-const handlePing = async () => {
-  if (!window.electronAPI) {
-    pingResult.value = '未检测到 Electron 环境（请在 Electron 中运行）';
-    return;
-  }
-
-  loading.value = true;
-  pingResult.value = '';
-
-  try {
-    const res = await window.electronAPI.ping();
-    pingResult.value = res;
-  } catch (err) {
-    pingResult.value = '调用失败: ' + (err as Error).message;
-  } finally {
-    loading.value = false;
-  }
-};
+const { platform, versions, loading, pingResult, ping } = useElectronRuntime();
 </script>
 
 <template>
@@ -90,7 +61,7 @@ const handlePing = async () => {
           <CardDescription>通过 preload 脚本调用主进程</CardDescription>
         </CardHeader>
         <CardContent class="space-y-4">
-          <Button :disabled="loading" @click="handlePing">
+          <Button :disabled="loading" @click="ping">
             {{ loading ? '请求中...' : '发送 Ping' }}
           </Button>
           <p
