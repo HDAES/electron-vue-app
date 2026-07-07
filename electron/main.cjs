@@ -1,8 +1,15 @@
-const { app, BrowserWindow, ipcMain } = require('electron');
+const { app, BrowserWindow, ipcMain, shell } = require('electron');
 const path = require('path');
 const { registerIpcHandlers } = require('./ipc/index.cjs');
 
-let mainWindow;
+const isDevelopment = process.env.NODE_ENV === 'development';
+const VITE_DEV_SERVER_URL = process.env.VITE_DEV_SERVER_URL || 'http://127.0.0.1:5173';
+
+let mainWindow = null;
+
+function getRendererEntry() {
+  return path.join(__dirname, '../dist/index.html');
+}
 
 function createWindow() {
   mainWindow = new BrowserWindow({
@@ -20,29 +27,40 @@ function createWindow() {
   });
 
   mainWindow.once('ready-to-show', () => {
-    mainWindow.show();
+    mainWindow?.show();
   });
 
-  if (process.env.NODE_ENV === 'development') {
-    mainWindow.loadURL('http://localhost:5173');
+  mainWindow.on('closed', () => {
+    mainWindow = null;
+  });
+
+  mainWindow.webContents.setWindowOpenHandler(({ url }) => {
+    shell.openExternal(url);
+    return { action: 'deny' };
+  });
+
+  if (isDevelopment) {
+    mainWindow.loadURL(VITE_DEV_SERVER_URL);
     mainWindow.webContents.openDevTools({ mode: 'detach' });
-  } else {
-    mainWindow.loadFile(path.join(__dirname, '../dist/index.html'));
+    return;
   }
+
+  mainWindow.loadFile(getRendererEntry());
 }
 
-registerIpcHandlers(ipcMain);
+app.whenReady().then(() => {
+  registerIpcHandlers(ipcMain);
+  createWindow();
 
-app.whenReady().then(createWindow);
+  app.on('activate', () => {
+    if (BrowserWindow.getAllWindows().length === 0) {
+      createWindow();
+    }
+  });
+});
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit();
-  }
-});
-
-app.on('activate', () => {
-  if (BrowserWindow.getAllWindows().length === 0) {
-    createWindow();
   }
 });
